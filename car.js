@@ -9,46 +9,78 @@ class Car {
         this.acceleration = 0.2;
         this.maxSpeed = 3;
         this.friction = 0.05;
+        this.angle = 0;
 
         this.controls = new Controls();
     }
 
     update() {
+        // forward acceleration
         if (this.controls.forward) {
             this.speed += this.acceleration;
         }
 
+        // backwards acceleration
         if (this.controls.reverse) {
             this.speed -= this.acceleration;
         }
 
+        // positive speed limitation
         if (this.speed > this.maxSpeed) {
             this.speed = this.maxSpeed;
         }
 
+        // negative speed limitation
         if (this.speed < -this.maxSpeed / 2) {
             this.speed = -this.maxSpeed / 2;
         }
 
+        // friction applied to positive speed
         if (this.speed > 0) {
             this.speed -= this.friction;
         }
 
+        // friction applied to negative speed
         if (this.speed < 0) {
             this.speed += this.friction;
         }
 
+        // speed set to 0 if its less than the value of the friction (prevents the car from moving eternally)
+        if (Math.abs(this.speed) < this.friction) {
+            this.speed = 0;
+        }
+
+        // move to the left
+        if (this.controls.left) {
+            this.angle += 0.03;
+        }
+
+        // move to the right
+        if (this.controls.right) {
+            this.angle -= 0.03;
+        }
+
+        this.x -= Math.sin(this.angle) * this.speed;
+        this.y -= Math.cos(this.angle) * this.speed;
+
+        // decrease the vertical position by the speed value (for one frame)
         this.y -= this.speed;
     }
 
     draw(ctx) {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(-this.angle);
+
         ctx.beginPath();
         ctx.rect(
-            this.x - this.width/2,
-            this.y - this.height/2,
+            -this.width/2,
+            -this.height/2,
             this.width,
             this.height
         );
         ctx.fill();
+
+        ctx.restore();
     }
 }
