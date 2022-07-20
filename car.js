@@ -15,6 +15,10 @@ class Car {
     }
 
     update() {
+        this.#move();
+    }
+
+    #move() {
         // forward acceleration
         if (this.controls.forward) {
             this.speed += this.acceleration;
@@ -50,21 +54,22 @@ class Car {
             this.speed = 0;
         }
 
-        // move to the left
-        if (this.controls.left) {
-            this.angle += 0.03;
-        }
+        if (this.speed != 0) {
+            const flip = this.speed > 0 ? 1 : -1;
+            
+            // move to the left
+            if (this.controls.left) {
+                this.angle += 0.03 * flip;
+            }
 
-        // move to the right
-        if (this.controls.right) {
-            this.angle -= 0.03;
+            // move to the right
+            if (this.controls.right) {
+                this.angle -= 0.03 * flip;
+            }
         }
 
         this.x -= Math.sin(this.angle) * this.speed;
         this.y -= Math.cos(this.angle) * this.speed;
-
-        // decrease the vertical position by the speed value (for one frame)
-        this.y -= this.speed;
     }
 
     draw(ctx) {
