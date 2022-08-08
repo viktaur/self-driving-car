@@ -1,7 +1,7 @@
 class Road {
     constructor(x, width, laneCount = 3) {
         this.x = x;
-        this.width = width;
+        this.width = width; // drivable part of the road
         this.laneCount = laneCount;
 
         this.left = x - width / 2;
