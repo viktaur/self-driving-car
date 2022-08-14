@@ -1,8 +1,3 @@
-type Point = {
-    x: number
-    y: number
-}
-
 class Car {
 
     x: number;
@@ -21,6 +16,8 @@ class Car {
     damaged: boolean;
 
     sensor: any; // change to Sensor
+    brain: any; // change to Brain?
+    controls: Controls;
 
     constructor(x: number, y: number, width: number, height: number, controlType: string, maxSpeed = 3) {
         this.x = x;
@@ -39,6 +36,7 @@ class Car {
 
         if (controlType != "DUMMY") {
             this.sensor = new Sensor(this);
+            this.brain = new NeuralNetwork([this.sensor.rayCount, 6, 4]);
         }
 
         this.controls = new Controls(controlType);
@@ -56,7 +54,7 @@ class Car {
         }
     }
 
-    #assessDamage(roadBorders, traffic) {
+    #assessDamage(roadBorders: Array<Array<Point>>, traffic: Array<Car>) {
         for (let i=0; i < roadBorders.length; i++) {
             if (polysIntersect(this.polygon, roadBorders[i])) {
                 return true;
@@ -149,7 +147,7 @@ class Car {
         this.y -= Math.cos(this.angle) * this.speed;
     }
 
-    draw(ctx, colour) {
+    draw(ctx: CanvasRenderingContext2D, colour: string) {
         if (this.damaged) {
             ctx.fillStyle = "gray";
         } else {

@@ -21,6 +21,7 @@ class Car {
         this.polygon = [];
         if (controlType != "DUMMY") {
             this.sensor = new Sensor(this);
+            this.brain = new NeuralNetwork([this.sensor.rayCount, 6, 4]);
         }
         this.controls = new Controls(controlType);
     }
