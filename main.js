@@ -13,11 +13,12 @@ animate();
 function animate() {
     // update every car on traffic
     for (let i=0; i < traffic.length; i++) {
-        traffic[i].update(road.borders);
+        // since we don't want dummy cars to hit and damage each other, we won't pass traffic as an argument
+        traffic[i].update(road.borders, []);
     }
 
-    // update the main car
-    car.update(road.borders);
+    // update the main car passing the possible obstacles (road borders and other cars)
+    car.update(road.borders, traffic);
 
     canvas.height = window.innerHeight;
 
@@ -26,13 +27,13 @@ function animate() {
 
     road.draw(ctx);
 
-    // draw every car on traffic
+    // draw every car on traffic in red
     for(let i=0; i < traffic.length; i++) {
-        traffic[i].draw(ctx);
+        traffic[i].draw(ctx, "red");
     }
 
-    // draw the main car
-    car.draw(ctx);
+    // draw the main car in blue
+    car.draw(ctx, "blue");
 
     ctx.restore();
     requestAnimationFrame(animate);
