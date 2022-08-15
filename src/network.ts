@@ -1,7 +1,7 @@
 class NeuralNetwork {
-    levels: Array<Level>;
+    levels: Level[];
 
-    constructor(neuronCounts: Array<number>) {
+    constructor(neuronCounts: number[]) {
         this.levels = [];
 
         for (let i = 0; i < neuronCounts.length - 1; i++) {
@@ -9,7 +9,7 @@ class NeuralNetwork {
         }
     }
 
-    static feedForward(givenInputs: Array<number>, network: any): Array<number> {
+    static feedForward(givenInputs: number[], network: any): number[] {
         let outputs = Level.feedForward(givenInputs, network.levels[0]);
 
         for (let i = 1; i< network.levels.length; i++) {
@@ -22,10 +22,10 @@ class NeuralNetwork {
 
 class Level {
 
-    inputs: Array<number>;
-    outputs: Array<number>;
-    biases: Array<number>;
-    weights: Array<Array<number>>;
+    inputs: number[];
+    outputs: number[];
+    biases: number[];
+    weights: number[][];
 
     constructor(inputCount: number, outputCount: number) {
         this.inputs = new Array(inputCount);
@@ -54,7 +54,7 @@ class Level {
         }
     }
 
-    static feedForward(givenInputs: Array<number>, level: Level) {
+    static feedForward(givenInputs: number[], level: Level) {
         // Set the values coming from the sensor (givenInputs) to each input node
         for (let i = 0; i < level.inputs.length; i++) {
             level.inputs[i] = givenInputs[i];

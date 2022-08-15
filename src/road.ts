@@ -10,7 +10,7 @@ class Road {
     top: number;
     bottom: number;
 
-    borders: Array<Array<Point>>
+    borders: Point[][];
 
     constructor(x: number, width: number, laneCount = 3) {
         this.x = x;

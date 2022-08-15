@@ -27,7 +27,7 @@ function getIntersection(A: Point, B: Point , C: Point, D: Point) {
     return null;
 }
 
-function polysIntersect(poly1: Array<Point>, poly2: Array<Point>) {
+function polysIntersect(poly1: Point[], poly2: Point[]) {
     for (let i=0; i < poly1.length; i++) {
         for (let j=0; j < poly2.length; j++) {
             const touch = getIntersection(

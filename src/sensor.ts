@@ -11,8 +11,8 @@ class Sensor {
     rayLength: number;
     raySpread: number;
 
-    rays: Array<Array<Point>>;
-    readings: Array<SensorTouch>;
+    rays: Point[][];
+    readings: SensorTouch[];
 
     constructor(car: Car) {
         this.car = car;
@@ -26,7 +26,7 @@ class Sensor {
         this.readings = [];
     }
 
-    update(roadBorders: Array<Array<Point>>, traffic: Array<Car>) {
+    update(roadBorders: Point[][], traffic: Car[]) {
         this.#castRays();
         this.readings = [];
 
@@ -38,7 +38,7 @@ class Sensor {
         }
     }
 
-    #getReading(ray: Array<Point>, roadBorders: Array<Array<Point>>, traffic: Array<Car>): SensorTouch | null | undefined {
+    #getReading(ray: Point[], roadBorders: Point[][], traffic: Car[]): SensorTouch | null | undefined {
         let touches = [];
 
         // touch road border

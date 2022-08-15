@@ -5,7 +5,7 @@ class Car {
     width: number;
     height: number;
 
-    polygon: Array<Point>;
+    polygon: Point[];
 
     speed: number;
     acceleration: number;
@@ -15,7 +15,7 @@ class Car {
 
     damaged: boolean;
 
-    sensor: any; // change to Sensor
+    sensor: Sensor | undefined; // change to Sensor
     brain: any; // change to Brain?
     controls: Controls;
 
@@ -42,7 +42,7 @@ class Car {
         this.controls = new Controls(controlType);
     }
 
-    update(roadBorders: any, traffic: Array<Car>) {
+    update(roadBorders: any, traffic: Car[]) {
         if(!this.damaged) {
             this.#move();
             this.polygon = this.#createPolygon();
@@ -51,10 +51,13 @@ class Car {
 
         if (this.sensor) {
             this.sensor.update(roadBorders, traffic);
+            const offsets = this.sensor.readings.map(s => s == null ? 0 : 1 - s.offset);
+            const outputs: number[] = NeuralNetwork.feedForward(offsets, this.brain);
+            console.log(outputs);
         }
     }
 
-    #assessDamage(roadBorders: Array<Array<Point>>, traffic: Array<Car>) {
+    #assessDamage(roadBorders: Point[][], traffic: Car[]) {
         for (let i=0; i < roadBorders.length; i++) {
             if (polysIntersect(this.polygon, roadBorders[i])) {
                 return true;
