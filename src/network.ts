@@ -4,18 +4,24 @@ class NeuralNetwork {
     constructor(neuronCounts: number[]) {
         this.levels = [];
 
+        // create the levels
         for (let i = 0; i < neuronCounts.length - 1; i++) {
             this.levels.push(new Level(neuronCounts[i], neuronCounts[i + 1]));
         }
     }
 
-    static feedForward(givenInputs: number[], network: any): number[] {
+    static feedForward(givenInputs: number[], network: NeuralNetwork): number[] {
         let outputs = Level.feedForward(givenInputs, network.levels[0]);
 
-        for (let i = 1; i< network.levels.length; i++) {
+        // For every level, feed forward
+        // outputs is reasigned on every level
+        // When it reaches the last level the function will return its outputs
+        for (let i = 1; i < network.levels.length; i++) {
             outputs = Level.feedForward(outputs, network.levels[i]);
         }
         
+        // console.log(outputs);
+
         return outputs;
     }
 }
@@ -33,7 +39,7 @@ class Level {
         this.biases = new Array(outputCount);
     
         this.weights = [];
-        for (let i=0; i < inputCount; i++) {
+        for (let i = 0; i < inputCount; i++) {
             this.weights[i] = new Array(outputCount);
         }
 
@@ -41,6 +47,7 @@ class Level {
     }
 
     static #randomize(level: Level) {
+
         // Randomise the weights between the inputs and the outputs with a value between -1 and 1
         for (let i = 0; i < level.inputs.length; i++) {
             for (let j = 0; j < level.outputs.length; j++) {
@@ -55,6 +62,7 @@ class Level {
     }
 
     static feedForward(givenInputs: number[], level: Level) {
+
         // Set the values coming from the sensor (givenInputs) to each input node
         for (let i = 0; i < level.inputs.length; i++) {
             level.inputs[i] = givenInputs[i];

@@ -1,7 +1,7 @@
 type SensorTouch = {
-    x: Point["x"];
-    y: Point["y"];
-    offset: number
+    x: number;
+    y: number;
+    offset: number;
 };
 
 class Sensor {
@@ -31,19 +31,19 @@ class Sensor {
         this.readings = [];
 
         for (let i = 0; i < this.rays.length; i++) {
-            const reading: SensorTouch | null | undefined = this.#getReading(this.rays[i], roadBorders, traffic);
+            const reading = this.#getReading(this.rays[i], roadBorders, traffic);
             if (reading) {
                 this.readings.push();
             }
         }
     }
 
-    #getReading(ray: Point[], roadBorders: Point[][], traffic: Car[]): SensorTouch | null | undefined {
+    #getReading(ray: Point[], roadBorders: Point[][], traffic: Car[]) {
         let touches = [];
 
         // touch road border
-        for (let i=0; i<roadBorders.length; i++) {
-            const touch: SensorTouch | null = getIntersection(
+        for (let i = 0; i < roadBorders.length; i++) {
+            const touch = getIntersection(
                 ray[0],
                 ray[1],
                 roadBorders[i][0],
@@ -55,7 +55,7 @@ class Sensor {
         }
 
         // touch other car
-        for(let i=0; i < traffic.length; i++) {
+        for(let i = 0; i < traffic.length; i++) {
             const poly = traffic[i].polygon;
             for (let j=0; j < poly.length; j++){
                 const value = getIntersection(
@@ -70,6 +70,7 @@ class Sensor {
             }
         }
 
+        // return the closest touch and if there are none, null
         if (touches.length==0) {
             return null;
         } else {
@@ -77,13 +78,14 @@ class Sensor {
             const minOffset = Math.min(...offsets);
             return touches.find(e => e.offset == minOffset);
         }
+
     }
 
     #castRays() {
         this.rays = [];
 
         // for every ray
-        for (let i=0; i<this.rayCount; i++) {
+        for (let i = 0; i < this.rayCount; i++) {
             const rayAngle = lerp(
                 this.raySpread/2,
                 -this.raySpread/2,
@@ -106,13 +108,13 @@ class Sensor {
 
     draw(ctx: CanvasRenderingContext2D) {
 
-        for (let i=0; i<this.rayCount; i++) {
+        for (let i = 0; i < this.rayCount; i++) {
 
             let end: Point = this.rays[i][1];
 
             // if there is an obstacle, set it as the end of the ray
             if (this.readings[i]) {
-                end = { x: this.readings[i].x, y: this.readings[i].y };
+                end = this.readings[i];
             }
 
             ctx.beginPath();

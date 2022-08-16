@@ -28,13 +28,13 @@ function getIntersection(A: Point, B: Point , C: Point, D: Point) {
 }
 
 function polysIntersect(poly1: Point[], poly2: Point[]) {
-    for (let i=0; i < poly1.length; i++) {
-        for (let j=0; j < poly2.length; j++) {
+    for (let i = 0; i < poly1.length; i++) {
+        for (let j = 0; j < poly2.length; j++) {
             const touch = getIntersection(
                 poly1[i],
-                poly1[(i+1) % poly1.length],
+                poly1[(i + 1) % poly1.length],
                 poly2[j],
-                poly2[(j+1) % poly2.length]
+                poly2[(j + 1) % poly2.length]
             );
             if (touch) {
                 return true;
@@ -42,4 +42,12 @@ function polysIntersect(poly1: Point[], poly2: Point[]) {
         }
     }
     return false;
+}
+
+function getRGBA(value: number){
+    const alpha = Math.abs(value);
+    const R = value < 0 ? 0 : 255;
+    const G = R;
+    const B = value > 0 ? 0 : 255;
+    return "rgba(" + R + "," + G + "," + B + "," + alpha + ")";
 }

@@ -19,7 +19,11 @@ class Car {
         this.angle = 0;
         this.damaged = false;
         this.polygon = [];
-        if (controlType != "DUMMY") {
+        this.useBrain = controlType == "AI";
+        if (controlType == "KEYS") {
+            this.sensor = new Sensor(this);
+        }
+        if (this.useBrain) {
             this.sensor = new Sensor(this);
             this.brain = new NeuralNetwork([this.sensor.rayCount, 6, 4]);
         }
@@ -31,11 +35,17 @@ class Car {
             this.polygon = __classPrivateFieldGet(this, _Car_instances, "m", _Car_createPolygon).call(this);
             this.damaged = __classPrivateFieldGet(this, _Car_instances, "m", _Car_assessDamage).call(this, roadBorders, traffic);
         }
-        if (this.sensor) {
+        if (this.brain && this.sensor) {
             this.sensor.update(roadBorders, traffic);
             const offsets = this.sensor.readings.map(s => s == null ? 0 : 1 - s.offset);
             const outputs = NeuralNetwork.feedForward(offsets, this.brain);
-            console.log(outputs);
+            // console.log(outputs);
+            if (this.useBrain) {
+                this.controls.forward = outputs[0] == 1 ? true : false;
+                this.controls.left = outputs[1] == 1 ? true : false;
+                this.controls.right = outputs[2] == 1 ? true : false;
+                this.controls.reverse = outputs[3] == 1 ? true : false;
+            }
         }
     }
     draw(ctx, colour) {

@@ -15,9 +15,11 @@ class Car {
 
     damaged: boolean;
 
-    sensor: Sensor | undefined; // change to Sensor
-    brain: any; // change to Brain?
+    sensor: Sensor | undefined;
+    brain: NeuralNetwork | undefined;
     controls: Controls;
+
+    useBrain: boolean;
 
     constructor(x: number, y: number, width: number, height: number, controlType: string, maxSpeed = 3) {
         this.x = x;
@@ -34,7 +36,13 @@ class Car {
         this.damaged = false;
         this.polygon = [];
 
-        if (controlType != "DUMMY") {
+        this.useBrain = controlType == "AI";
+
+        if (controlType == "KEYS") {
+            this.sensor = new Sensor(this);
+        }
+
+        if (this.useBrain) {
             this.sensor = new Sensor(this);
             this.brain = new NeuralNetwork([this.sensor.rayCount, 6, 4]);
         }
@@ -49,22 +57,29 @@ class Car {
             this.damaged = this.#assessDamage(roadBorders, traffic);
         }
 
-        if (this.sensor) {
+        if (this.brain && this.sensor) {
             this.sensor.update(roadBorders, traffic);
             const offsets = this.sensor.readings.map(s => s == null ? 0 : 1 - s.offset);
             const outputs: number[] = NeuralNetwork.feedForward(offsets, this.brain);
-            console.log(outputs);
+            // console.log(outputs);
+
+            if (this.useBrain) {
+                this.controls.forward = outputs[0] == 1 ? true : false;
+                this.controls.left = outputs[1] == 1 ? true : false;
+                this.controls.right = outputs[2] == 1 ? true : false;
+                this.controls.reverse = outputs[3] == 1 ? true : false;
+            }
         }
     }
 
     #assessDamage(roadBorders: Point[][], traffic: Car[]) {
-        for (let i=0; i < roadBorders.length; i++) {
+        for (let i = 0; i < roadBorders.length; i++) {
             if (polysIntersect(this.polygon, roadBorders[i])) {
                 return true;
             }
         }
 
-        for (let i=0; i < traffic.length; i++) {
+        for (let i = 0; i < traffic.length; i++) {
             if (polysIntersect(this.polygon, traffic[i].polygon)) {
                 return true;
             }

@@ -31,7 +31,7 @@ class Sensor {
             let end = this.rays[i][1];
             // if there is an obstacle, set it as the end of the ray
             if (this.readings[i]) {
-                end = { x: this.readings[i].x, y: this.readings[i].y };
+                end = this.readings[i];
             }
             ctx.beginPath();
             ctx.lineWidth = 2;
@@ -67,6 +67,7 @@ _Sensor_instances = new WeakSet(), _Sensor_getReading = function _Sensor_getRead
             }
         }
     }
+    // return the closest touch and if there are none, null
     if (touches.length == 0) {
         return null;
     }
